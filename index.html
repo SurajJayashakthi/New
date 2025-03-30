@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[Your Name] - Photographer Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        .parallax-section { background: url('https://via.placeholder.com/1920x1080') no-repeat center/cover; background-attachment: fixed; }
+        @media (max-width: 768px) { .parallax-section { background-attachment: scroll; } }
+        .modal { display: none; }
+        .modal.active { display: flex; }
+        #three-js-canvas { width: 100%; height: 300px; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-700 transition-all duration-300">
+    <!-- Sticky Navigation -->
+    <nav class="sticky top-0 z-10 bg-white shadow-md py-4 px-6 flex justify-center space-x-6">
+        <a href="#hero" class="text-gray-700 hover:text-orange-500 flex items-center"><i class="fas fa-home mr-1"></i> Home</a>
+        <a href="#portfolio" class="text-gray-700 hover:text-orange-500 flex items-center"><i class="fas fa-camera mr-1"></i> Portfolio</a>
+        <a href="#about" class="text-gray-700 hover:text-orange-500 flex items-center"><i class="fas fa-user mr-1"></i> About</a>
+        <a href="#services" class="text-gray-700 hover:text-orange-500 flex items-center"><i class="fas fa-concierge-bell mr-1"></i> Services</a>
+        <a href="#testimonials" class="text-gray-700 hover:text-orange-500 flex items-center"><i class="fas fa-star mr-1"></i> Testimonials</a>
+        <a href="#contact" class="text-gray-700 hover:text-orange-500 flex items-center"><i class="fas fa-envelope mr-1"></i> Contact</a>
+    </nav>
+
+    <!-- Dark Mode Toggle -->
+    <button id="theme-toggle" class="fixed top-16 right-4 bg-orange-500 text-white px-3 py-1 rounded z-20 hover:bg-orange-600 flex items-center">
+        <i class="fas fa-moon mr-1"></i> Dark Mode
+    </button>
+
+    <!-- Hero Section with Video -->
+    <section id="hero" class="relative h-screen overflow-hidden">
+        <video autoplay muted loop class="w-full h-full object-cover filter brightness-75">
+            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+        </video>
+        <div class="absolute inset-0 flex items-center justify-center text-center text-white bg-black bg-opacity-50" data-aos="fade-down">
+            <div>
+                <h1 class="text-4xl md:text-6xl font-bold">Hi, I’m [Your Name]</h1>
+                <p class="text-lg md:text-xl mt-2">Capturing moments that last forever</p>
+                <a href="#portfolio" class="mt-4 inline-block bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600 transform hover:scale-105 transition flex items-center justify-center">
+                    <i class="fas fa-eye mr-2"></i> View Portfolio
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section with 3D Viewer -->
+    <section id="portfolio" class="py-12 px-6 text-center">
+        <h2 class="text-3xl font-bold" data-aos="fade-up"><i class="fas fa-camera-retro mr-2"></i> Portfolio</h2>
+        <select class="mt-4 p-2 border rounded" onchange="applyFilter(this.value)" data-aos="fade-up">
+            <option value="none">Original</option>
+            <option value="grayscale">B&W</option>
+            <option value="sepia">Sepia</option>
+        </select>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6" data-aos="fade-up">
+            <!-- 3D Viewer -->
+            <div id="three-js-canvas" class="w-full h-80"></div>
+            <!-- Regular Images -->
+            <img src="https://via.placeholder.com/300" alt="Portrait" class="w-full cursor-pointer hover:scale-105 transition-transform" loading="lazy" onclick="openLightbox(this.src)">
+            <img src="https://via.placeholder.com/300" alt="Landscape" class="w-full cursor-pointer hover:scale-105 transition-transform" loading="lazy" onclick="openLightbox(this.src)">
+        </div>
+    </section>
+
+    <!-- Lightbox -->
+    <div class="lightbox fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-30" onclick="closeLightbox()">
+        <img id="lightbox-img" class="max-w-[90%] max-h-[90%]">
+    </div>
+
+    <!-- Parallax Section -->
+    <section class="parallax-section h-96 flex items-center justify-center text-white text-2xl md:text-3xl" data-aos="zoom-in">
+        <h2><i class="fas fa-clock mr-2"></i> Timeless Photography</h2>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-12 px-6 bg-gray-50 text-center" data-aos="fade-up">
+        <h2 class="text-3xl font-bold"><i class="fas fa-user-circle mr-2"></i> About Me</h2>
+        <p class="mt-4 max-w-2xl mx-auto">I’m [Your Name], a passionate photographer with a love for capturing life’s beauty. My mission is to create timeless images that tell your story.</p>
+    </section>
+
+    <!-- Services Section with Booking Modal -->
+    <section id="services" class="py-12 px-6 text-center">
+        <h2 class="text-3xl font-bold" data-aos="fade-up"><i class="fas fa-concierge-bell mr-2"></i> Services</h2>
+        <div class="flex flex-wrap justify-center gap-6 mt-6">
+            <div class="w-full sm:w-80 p-6 border rounded-lg hover:shadow-lg transition-transform hover:-translate-y-2" data-aos="fade-right">
+                <h3 class="text-xl font-semibold">Wedding Photography</h3>
+                <p class="mt-2">Full-day coverage - $2000</p>
+                <button onclick="openModal()" class="mt-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transform hover:scale-105 transition flex items-center justify-center mx-auto">
+                    <i class="fas fa-calendar-check mr-2"></i> Book Now
+                </button>
+            </div>
+            <div class="w-full sm:w-80 p-6 border rounded-lg hover:shadow-lg transition-transform hover:-translate-y-2" data-aos="fade-left">
+                <h3 class="text-xl font-semibold">Portrait Sessions</h3>
+                <p class="mt-2">1-hour session - $300</p>
+                <button onclick="openModal()" class="mt-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transform hover:scale-105 transition flex items-center justify-center mx-auto">
+                    <i class="fas fa-calendar-check mr-2"></i> Book Now
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Modal -->
+    <div id="booking-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md">
+            <h3 class="text-2xl font-bold mb-4"><i class="fas fa-bookmark mr-2"></i> Book a Session</h3>
+            <form action="https://formspree.io/f/your-form-id" method="POST">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-user mr-2 text-gray-500"></i>
+                    <input type="text" name="name" placeholder="Your Name" class="w-full p-2 border rounded" required>
+                </div>
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-envelope mr-2 text-gray-500"></i>
+                    <input type="email" name="email" placeholder="Your Email" class="w-full p-2 border rounded" required>
+                </div>
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-phone mr-2 text-gray-500"></i>
+                    <input type="tel" name="number" placeholder="Your Phone Number" class="w-full p-2 border rounded" required>
+                </div>
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-list mr-2 text-gray-500"></i>
+                    <select name="event-type" class="w-full p-2 border rounded" required>
+                        <option value="">Select Event Type</option>
+                        <option value="wedding">Wedding</option>
+                        <option value="portrait">Portrait</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-calendar-alt mr-2 text-gray-500"></i>
+                    <input type="date" name="date" class="w-full p-2 border rounded" required>
+                </div>
+                <button type="submit" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 flex items-center">
+                    <i class="fas fa-paper-plane mr-2"></i> Submit
+                </button>
+                <button type="button" onclick="closeModal()" class="ml-2 text-gray-700 flex items-center">
+                    <i class="fas fa-times mr-2"></i> Cancel
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-12 px-6 bg-gray-50 text-center" data-aos="fade-up">
+        <h2 class="text-3xl font-bold"><i class="fas fa-star mr-2"></i> Testimonials</h2>
+        <div class="flex flex-wrap justify-center gap-6 mt-6">
+            <div class="w-full sm:w-80 italic" data-aos="fade-right">“Amazing work!” - Jane D.</div>
+            <div class="w-full sm:w-80 italic" data-aos="fade-left">“Highly recommend!” - John S.</div>
+        </div>
+    </section>
+
+    <!-- Social Feed (Simulated) -->
+    <section class="py-12 px-6 text-center" data-aos="fade-up">
+        <h2 class="text-3xl font-bold"><i class="fas fa-share-alt mr-2"></i> Follow Me</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-6">
+            <img src="https://via.placeholder.com/200" alt="Social post 1" class="w-full" loading="lazy">
+            <img src="https://via.placeholder.com/200" alt="Social post 2" class="w-full" loading="lazy">
+            <img src="https://via.placeholder.com/200" alt="Social post 3" class="w-full" loading="lazy">
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-12 px-6 text-center">
+        <h2 class="text-3xl font-bold" data-aos="fade-up"><i class="fas fa-envelope mr-2"></i> Contact Me</h2>
+        <form class="max-w-md mx-auto mt-6" action="https://formspree.io/f/your-form-id" method="POST">
+            <div class="flex items-center mb-4">
+                <i class="fas fa-user mr-2 text-gray-500"></i>
+                <input type="text" name="name" placeholder="Your Name" class="w-full p-2 border rounded" required>
+            </div>
+            <div class="flex items-center mb-4">
+                <i class="fas fa-envelope mr-2 text-gray-500"></i>
+                <input type="email" name="email" placeholder="Your Email" class="w-full p-2 border rounded" required>
+            </div>
+            <div class="flex items-center mb-4">
+                <i class="fas fa-comment mr-2 text-gray-500"></i>
+                <textarea name="message" placeholder="Your Message" rows="5" class="w-full p-2 border rounded" required></textarea>
+            </div>
+            <button type="submit" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transform hover:scale-105 transition flex items-center justify-center mx-auto">
+                <i class="fas fa-paper-plane mr-2"></i> Send
+            </button>
+        </form>
+        <div class="mt-6 flex justify-center space-x-6">
+            <a href="#" class="text-gray-700 hover:text-orange-500"><i class="fab fa-instagram fa-lg"></i></a>
+            <a href="#" class="text-gray-700 hover:text-orange-500"><i class="fab fa-twitter fa-lg"></i></a>
+            <a href="#" class="text-gray-700 hover:text-orange-500"><i class="fab fa-tiktok fa-lg"></i></a>
+            <a href="#" class="text-gray-700 hover:text-orange-500"><i class="fab fa-whatsapp fa-lg"></i></a>
+            <a href="#" class="text-gray-700 hover:text-orange-500"><i class="fab fa-facebook fa-lg"></i></a>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // AOS Initialization
+        AOS.init();
+
+        // Dark Mode Toggle
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            document.body.classList.toggle('bg-gray-900');
+            document.body.classList.toggle('text-gray-200');
+            document.querySelector('nav').classList.toggle('bg-gray-800');
+            document.querySelectorAll('.bg-gray-50').forEach(el => el.classList.toggle('bg-gray-700'));
+        });
+
+        // Lightbox
+        function openLightbox(src) {
+            const lightbox = document.querySelector('.lightbox');
+            document.getElementById('lightbox-img').src = src;
+            lightbox.classList.add('active');
+        }
+        function closeLightbox() {
+            document.querySelector('.lightbox').classList.remove('active');
+        }
+
+        // Image Filters
+        function applyFilter(filter) {
+            const imgs = document.querySelectorAll('.gallery img');
+            imgs.forEach(img => {
+                img.classList.remove('filter-grayscale', 'filter-sepia');
+                if (filter !== 'none') img.classList.add(`filter-${filter}`);
+            });
+        }
+
+        // Booking Modal
+        function openModal() {
+            document.getElementById('booking-modal').classList.add('active');
+        }
+        function closeModal() {
+            document.getElementById('booking-modal').classList.remove('active');
+        }
+
+        // 3D Viewer with Three.js
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / 300, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth < 768 ? window.innerWidth - 40 : 300, 300);
+        document.getElementById('three-js-canvas').appendChild(renderer.domElement);
+
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('https://via.placeholder.com/300');
+        const geometry = new THREE.PlaneGeometry(5, 5);
+        const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+        const plane = new THREE.Mesh(geometry, material);
+        scene.add(plane);
+
+        camera.position.z = 5;
+
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+
+        renderer.domElement.addEventListener('mousedown', (e) => {
+            isDragging = true;
+        });
+        renderer.domElement.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const deltaMove = {
+                    x: e.offsetX - previousMousePosition.x,
+                    y: e.offsetY - previousMousePosition.y
+                };
+                plane.rotation.y += deltaMove.x * 0.01;
+                plane.rotation.x += deltaMove.y * 0.01;
+            }
+            previousMousePosition = { x: e.offsetX, y: e.offsetY };
+        });
+        renderer.domElement.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+        renderer.domElement.addEventListener('mouseleave', () => {
+            isDragging = false;
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if (!isDragging) plane.rotation.y += 0.01; // Auto-rotate when not dragging
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // PWA Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW failed:', err));
+        }
+    </script>
+</body>
+</html>
